@@ -2,6 +2,7 @@
     import { sleep } from "../helpers.js";
     import { keyMap } from "../data.js";
     import {
+        layouts,
         bassKeyMap,
         getLayout,
         getBassLayout,
@@ -21,7 +22,7 @@
 
     // State
     let direction = "pull";
-    let tuning = "BC";
+    let tuning = "B/C";
     let activeButtonIdMap = {};
 
     let layout = getLayout(tuning);
@@ -29,7 +30,12 @@
     let buttonIdMap = getButtonIdMap(layout, bassLayout);
 
     function handleChangeTuning(e) {
-        tuning = e.target.value;
+        const newTuning = e.target.value;
+        layout = getLayout(newTuning);
+        bassLayout = getBassLayout(newTuning);
+        buttonIdMap = getButtonIdMap(layout, bassLayout);
+
+        tuning = newTuning; // trigger rerender from #key
     }
 
     // Handlers
@@ -239,143 +245,153 @@
         <div class="banner">This app is only available on a desktop!</div>
     </div>
 
-    <div class="layout">
-        <div class="keyboard-side">
-            <div class="desktop-only accordion-layout">
-                {#each rows as row}
-                    <div class="row {row}">
-                        {#each layout[row].filter( ({ id }) => id.includes(direction), ) as button}
-                            <div
-                                class={`circle ${activeButtonIdMap[button.id] ? "active" : ""} ${direction} `}
-                                id={button.id}
-                                on:mousedown={handleClickNote(button.id)}
-                            >
-                                {button.name}
+    {#key tuning}
+        <div class="layout">
+            <div class="keyboard-side">
+                <div class="desktop-only accordion-layout">
+                    {#each rows as row}
+                        <div class="row {row}">
+                            {#each layout[row].filter( ({ id }) => id.includes(direction), ) as button}
+                                <div
+                                    class={`circle ${activeButtonIdMap[button.id] ? "active" : ""} ${direction} `}
+                                    id={button.id}
+                                    on:mousedown={handleClickNote(button.id)}
+                                >
+                                    {button.name}
+                                </div>
+                            {/each}
+                            <h4>{rowTones[tuning][row]}<br />{row}</h4>
+                        </div>
+                    {/each}
+                </div>
+            </div>
+
+            <div class="information-side">
+                <div class="information">
+                    <header class="header">
+                        <h1 class="title">Diatonic Accordion</h1>
+                        <div class="subtitle">
+                            Play the diatonic button accordion with your
+                            computer keyboard
+                        </div>
+                    </header>
+                    <div>
+                        <h3>How to use</h3>
+                        <ul>
+                            <li>
+                                Each key on the keyboard corresponds to a button
+                                on the accordion.
+                            </li>
+                            <li>
+                                Hold down <kbd>q</kbd> to <strong>push</strong>
+                                the bellows. Default is
+                                <strong>pull</strong>.
+                            </li>
+                            <li>
+                                The treble side buttons begin with <kbd>z</kbd>,
+                                <kbd>a</kbd>, and
+                                <kbd>w</kbd>
+                            </li>
+                            <li>
+                                The twelve bass buttons use the number row from <kbd
+                                    >1</kbd
+                                >
+                                to
+                                <kbd>=</kbd>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="flex">
+                        <div>
+                            <h3>Tuning</h3>
+                            <select on:change={handleChangeTuning}>
+                                {#each Object.keys(layouts) as key}
+                                    {#if tuning == key}
+                                        <option value={key} selected
+                                            >{key}</option
+                                        >
+                                    {:else}
+                                        <option value={key}>{key}</option>
+                                    {/if}
+                                {/each}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3>Major Scales</h3>
+                        <div class="scales">
+                            <div class="scale">
+                                <h4>F Major</h4>
+                                <div>
+                                    <button on:click={playScale("F", "notes")}
+                                        >Notes</button
+                                    >
+                                    <button on:click={playScale("F", "thirds")}
+                                        >Thirds</button
+                                    >
+                                </div>
+                            </div>
+                            <div class="scale">
+                                <h4>B♭ Major</h4>
+                                <div>
+                                    <button on:click={playScale("Bb", "notes")}
+                                        >Notes</button
+                                    >
+                                    <button on:click={playScale("Bb", "thirds")}
+                                        >Thirds</button
+                                    >
+                                </div>
+                            </div>
+                            <div class="scale">
+                                <h4>E♭ Major</h4>
+                                <div>
+                                    <button on:click={playScale("Eb", "notes")}
+                                        >Notes</button
+                                    >
+                                    <button on:click={playScale("Eb", "thirds")}
+                                        >Thirds</button
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="currently-playing">
+                        {#each Object.entries(activeButtonIdMap) as [id, value]}
+                            <div class="flex col">
+                                <div class="circle note">{value.name}</div>
+                                <div>
+                                    <small
+                                        >Row: {id.split("-")[0]}<br /> Col: {id.split(
+                                            "-",
+                                        )[1]}</small
+                                    >
+                                </div>
                             </div>
                         {/each}
-                        <h4>{rowTones[tuning][row]}<br />{row}</h4>
                     </div>
-                {/each}
+                </div>
             </div>
-        </div>
 
-        <div class="information-side">
-            <div class="information">
-                <header class="header">
-                    <h1 class="title">Diatonic Accordion</h1>
-                    <div class="subtitle">
-                        Play the diatonic button accordion with your computer
-                        keyboard
-                    </div>
-                </header>
-                <div>
-                    <h3>How to use</h3>
-                    <ul>
-                        <li>
-                            Each key on the keyboard corresponds to a button on
-                            the accordion.
-                        </li>
-                        <li>
-                            Hold down <kbd>q</kbd> to <strong>push</strong> the
-                            bellows. Default is
-                            <strong>pull</strong>.
-                        </li>
-                        <li>
-                            The treble side buttons begin with <kbd>z</kbd>,
-                            <kbd>a</kbd>, and
-                            <kbd>w</kbd>
-                        </li>
-                        <li>
-                            The twelve bass buttons use the number row from <kbd
-                                >1</kbd
-                            >
-                            to
-                            <kbd>=</kbd>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="flex">
-                    <div>
-                        <h3>Tuning</h3>
-                        <select on:click={handleChangeTuning}>
-                            <option value="BC" selected>B/C</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <h3>Major Scales</h3>
-                    <div class="scales">
-                        <div class="scale">
-                            <h4>F Major</h4>
-                            <div>
-                                <button on:click={playScale("F", "notes")}
-                                    >Notes</button
+            <div class="bass-side">
+                <div class="desktop-only accordion-layout">
+                    {#each bassRows as row}
+                        <div class="row {row}">
+                            {#each bassLayout[row].filter( ({ id }) => id.includes(direction), ) as button}
+                                <div
+                                    class={`circle ${activeButtonIdMap[button.id] ? "active" : ""} ${direction} `}
+                                    id={button.id}
+                                    on:mousedown={handleClickNote(button.id)}
                                 >
-                                <button on:click={playScale("F", "thirds")}
-                                    >Thirds</button
-                                >
-                            </div>
-                        </div>
-                        <div class="scale">
-                            <h4>B♭ Major</h4>
-                            <div>
-                                <button on:click={playScale("Bb", "notes")}
-                                    >Notes</button
-                                >
-                                <button on:click={playScale("Bb", "thirds")}
-                                    >Thirds</button
-                                >
-                            </div>
-                        </div>
-                        <div class="scale">
-                            <h4>E♭ Major</h4>
-                            <div>
-                                <button on:click={playScale("Eb", "notes")}
-                                    >Notes</button
-                                >
-                                <button on:click={playScale("Eb", "thirds")}
-                                    >Thirds</button
-                                >
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="currently-playing">
-                    {#each Object.entries(activeButtonIdMap) as [id, value]}
-                        <div class="flex col">
-                            <div class="circle note">{value.name}</div>
-                            <div>
-                                <small
-                                    >Row: {id.split("-")[0]}<br /> Col: {id.split(
-                                        "-",
-                                    )[1]}</small
-                                >
-                            </div>
+                                    {button.name}
+                                </div>
+                            {/each}
                         </div>
                     {/each}
                 </div>
             </div>
         </div>
-
-        <div class="bass-side">
-            <div class="desktop-only accordion-layout">
-                {#each bassRows as row}
-                    <div class="row {row}">
-                        {#each bassLayout[row].filter( ({ id }) => id.includes(direction), ) as button}
-                            <div
-                                class={`circle ${activeButtonIdMap[button.id] ? "active" : ""} ${direction} `}
-                                id={button.id}
-                                on:mousedown={handleClickNote(button.id)}
-                            >
-                                {button.name}
-                            </div>
-                        {/each}
-                    </div>
-                {/each}
-            </div>
-        </div>
-    </div>
+    {/key}
 </main>

@@ -1,8 +1,8 @@
 import { tone } from './data.js'
 
 export const layouts = {
-    'BC': [
-        [],
+    'B/C': [
+        [], // blank for 2 row
         [
             ['Ab.3', 'Eb.3'],
             ['Bb.3', 'Gb.3'],
@@ -28,29 +28,37 @@ export const layouts = {
             ['B.5', 'E.6'],
         ],
     ],
+    'V3': [
+        [], // blank for 2 row
+        [
+            ['C.3', 'D.3'],
+            ['E.3', 'Gb.3'],
+            ['Ab.3', 'Bb.3'],
+            ['C.4', 'D.4'],
+            ['E.4', 'Gb.4'],
+            ['Ab.4', 'Bb.4'],
+            ['C.5', 'D.5'],
+            ['E.5', 'Gb.5'],
+            ['Ab.5', 'Bb.5'],
+            ['C.6', 'D.6'],
+            ['E.6', 'Gb.6'],
+        ], [
+            ['Eb.3', 'F.3'],
+            ['G.3', 'A.3'],
+            ['B.3', 'Db.4'],
+            ['Eb.4', 'F.4'],
+            ['G.4', 'A.4'],
+            ['B.4', 'Db.5'],
+            ['Eb.5', 'F.5'],
+            ['G.5', 'A.5'],
+            ['B.5', 'Db.6'],
+            ['Eb.6', 'F.6'],
+        ],
+    ],
 }
-
-export const getLayout = (tuning) => {
-    const arrangement = layouts[tuning]
-    const [one, two, three] = getRows(arrangement)
-    return { one, two, three }
-}
-
-export const getRows = (arrangement) => arrangement.map((row, r) => (
-    row.map((button, b) => {
-        const [pull, push] = button;
-        const [pull_note, pull_octave] = pull.split('.')
-        const [push_note, push_octave] = push.split('.')
-
-        return [
-            { id: `${r + 1}-${b + 1}-pull`, name: pull_note, frequency: tone[pull_note][parseInt(pull_octave)] },
-            { id: `${r + 1}-${b + 1}-push`, name: push_note, frequency: tone[push_note][parseInt(push_octave)] },
-        ]
-    }).flat()
-))
 
 export const bassLayouts = {
-    'BC': [[
+    'B/C': [[
         [['D.3', 'Gb.3', 'A.3'], ['G.3', 'B.3', 'E.4']],
         [['D.2'], ['G.2']],
         [['G.3', 'B.3', 'E.4'], ['C.3', 'E.3', 'G.3']],
@@ -74,9 +82,32 @@ export const bassLayouts = {
     ]]
 }
 
+
+export const getLayout = (tuning) => {
+    console.log('getLayoutTuning', tuning)
+    const arrangement = layouts[tuning]
+    const [one, two, three] = getRows(arrangement)
+
+    return { one, two, three }
+}
+
+export const getRows = (arrangement) => arrangement.map((row, r) => (
+    row.map((button, b) => {
+        const [pull, push] = button;
+        const [pull_note, pull_octave] = pull.split('.')
+        const [push_note, push_octave] = push.split('.')
+
+        return [
+            { id: `${r + 1}-${b + 1}-pull`, name: pull_note, frequency: tone[pull_note][parseInt(pull_octave)] },
+            { id: `${r + 1}-${b + 1}-push`, name: push_note, frequency: tone[push_note][parseInt(push_octave)] },
+        ]
+    }).flat()
+))
+
 export const getBassLayout = (tuning) => {
     const arrangement = bassLayouts[tuning]
     const [one, two, three] = getBassRows(arrangement)
+
     return { one, two, three }
 }
 
@@ -181,23 +212,24 @@ export const getButtonIdMap = (layout, bassLayout) => {
 
 export const bassKeyMap = {
     1: { row: 1, column: 1 },
-    2: { row: 1, column: 2 },
-    3: { row: 2, column: 1 },
+    2: { row: 2, column: 1 },
+    3: { row: 1, column: 2 },
     4: { row: 2, column: 2 },
     5: { row: 1, column: 3 },
-    6: { row: 1, column: 4 },
-    7: { row: 2, column: 3 },
+    6: { row: 2, column: 3 },
+    7: { row: 1, column: 4 },
     8: { row: 2, column: 4 },
     9: { row: 1, column: 5 },
-    0: { row: 1, column: 6 },
-    '-': { row: 2, column: 5 },
+    0: { row: 2, column: 5 },
+    '-': { row: 1, column: 6 },
     '=': { row: 2, column: 6 },
 }
 
 export const rowMap = { 2: 'two', 3: 'three' }
 export const bassRowMap = { 1: 'one', 2: 'two' }
 export const rowTones = {
-    BC: { one: '', two: 'B', three: 'C' },
+    'B/C': { one: '', two: 'B', three: 'C' },
+    'V3': { one: '', two: 'outer', three: 'inner' },
 }
 
 export const rows = Object.values(rowMap)
