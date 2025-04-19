@@ -1,6 +1,6 @@
 :root {
-  --red: #ff8787;
-  --green: #8ce99a;
+  --red: #e95353;
+  --green: #2dcd6d;
   --yellow: rgba(225, 224, 84, 1);
   --blue: #5c7cfa;
 }
@@ -193,14 +193,14 @@ footer {
 @media screen and (min-width: 600px) {
   .layout {
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     gap: 2.5rem;
   }
 }
 
 .information-side {
-  width: 100%;
+  width: 40%;
 }
 
 .information {
@@ -222,6 +222,7 @@ footer {
 .row.three {
   margin-top: 35px;
 }
+
 .row.four {
   margin-top: 70px;
 }
@@ -314,23 +315,40 @@ h2.direction {
   font-weight: 500;
 }
 
+.pull-text {
+  font-weight: 800;
+  color: var(--green);
+}
+
 .direction.pull {
   color: var(--green);
+}
+
+.push-text {
+  font-weight: 800;
+  color: var(--red);
 }
 
 .direction.push {
   color: var(--red);
 }
 
+.info-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  margin: 2%,
+}
+
 .scales {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
 .scale {
-  display: flex;
-  flex-direction: column;
   padding: 1rem;
   border-radius: 6px;
   background: var(--blue);

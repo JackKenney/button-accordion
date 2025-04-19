@@ -28,6 +28,33 @@ export const layouts = {
             ['Eb.6', 'F.6'],
         ],
     ],
+    'V2': [
+        [], // blank for 2 row
+        [
+            ['D.3', 'C.3'],
+            ['Gb.3', 'E.3'],
+            ['Bb.3', 'Ab.3'],
+            ['D.4', 'C.4'],
+            ['Gb.4', 'E.4'],
+            ['Bb.4', 'Ab.4'],
+            ['D.5', 'C.5'],
+            ['Gb.5', 'E.5'],
+            ['Bb.5', 'Ab.5'],
+            ['D.6', 'C.6'],
+            ['Gb.6', 'E.6'],
+        ], [
+            ['F.3', 'Eb.3'],
+            ['A.3', 'G.3'],
+            ['Db.4', 'B.3'],
+            ['F.4', 'Eb.4'],
+            ['A.4', 'G.4'],
+            ['Db.5', 'B.4'],
+            ['F.5', 'Eb.5'],
+            ['A.5', 'G.5'],
+            ['Db.6', 'B.5'],
+            ['F.6', 'Eb.6'],
+        ],
+    ],
     'B/C': [
         [], // blank for 2 row
         [
@@ -70,6 +97,7 @@ export const bassLayouts = {
         [['F.3', 'A.3', 'C.4'], ['C.3', 'E.3', 'G.3']],
         [['F.2'], ['C.2']],
     ]],
+    'V2': [[], []],
     'V3': [[
         [['G.2'], ['D.2']],
         [['E.2'], ['A.2']],
@@ -84,7 +112,6 @@ export const bassLayouts = {
 
 
 export const getLayout = (tuning) => {
-    console.log('getLayoutTuning', tuning)
     const arrangement = layouts[tuning]
     const [one, two, three] = getRows(arrangement)
 
@@ -131,7 +158,44 @@ export const getBassRows = (arrangement) => arrangement.map((row, r) => (
 ))
 
 // Scales
-export const scales = {
+export const notes = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
+const findScale = (tuning, note) => {
+    const scale = [];
+    const intervals = [0, 2, 2, 1, 2, 2, 2, 1]
+    const original_idx = notes.indexOf(note)
+    let last = original_idx
+    let octave = 4
+    intervals.forEach((interval) => {
+        if ((last + interval) % notes.length < original_idx && last + interval >= notes.length)
+            octave += 1
+        last = last + interval
+        const find = notes[last % notes.length] // find next note name
+        let found = false;
+        layouts[tuning].forEach((row, r) => {
+            row.forEach(([pull, push], b) => {
+                if (!found && pull == `${find}.${octave}`) {
+                    scale.push([`${r + 1}-${b + 1}-pull`])
+                    found = true
+                }
+                if (!found && push == `${find}.${octave}`) {
+                    scale.push([`${r + 1}-${b + 1}-push`])
+                    found = true
+                }
+            })
+        })
+    })
+    return scale;
+}
+
+export const getScales = (tuning) => (
+    notes.reduce((carry, note) => {
+        carry[note] = { notes: findScale(tuning, note) }
+        return carry
+    }, {})
+)
+
+
+export const scales_old = {
     F: {
         notes: [
             ['3-3-pull'],
@@ -230,6 +294,7 @@ export const bassRowMap = { 1: 'one', 2: 'two' }
 export const rowTones = {
     'B/C': { one: '', two: 'B', three: 'C' },
     'V3': { one: '', two: 'outer', three: 'inner' },
+    'V2': { one: '', two: 'outer', three: 'inner' },
 }
 
 export const rows = Object.values(rowMap)

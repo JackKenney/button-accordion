@@ -2,6 +2,7 @@
     import { sleep } from "../helpers.js";
     import { keyMap } from "../data.js";
     import {
+        notes,
         layouts,
         bassKeyMap,
         getLayout,
@@ -11,7 +12,7 @@
         bassRows,
         rowTones,
         toggleBellows,
-        scales,
+        getScales,
     } from "../diatonic-data.js";
 
     // Audio
@@ -204,7 +205,8 @@
         handleClearAllNotes();
 
         for (const id of idSet) {
-            // handleToggleBellows('pull')
+            if (id.includes("pull")) handleToggleBellows("pull");
+            else handleToggleBellows("push");
             if (!activeButtonIdMap[id]) {
                 const { oscillator } = playTone(id);
 
@@ -223,10 +225,10 @@
         }
     }
 
-    const playScale = (scale, type) => async () => {
-        const reverse = [...scales[scale][type]].reverse();
-        reverse.shift();
-        const scaleBackAndForth = [...scales[scale][type], ...reverse];
+    const playScale = (tuning, rootNote, scaleType) => async () => {
+        const scales = getScales(tuning);
+        const scale = scales[rootNote][scaleType];
+        const scaleBackAndForth = [...scale, ...scale.reverse()];
 
         for (const idSet of scaleBackAndForth) {
             await playNotesInScale(idSet);
@@ -260,7 +262,7 @@
                                     {button.name}
                                 </div>
                             {/each}
-                            <h4>{rowTones[tuning][row]}<br />{row}</h4>
+                            <h4>{rowTones[tuning][row]}</h4>
                         </div>
                     {/each}
                 </div>
@@ -283,9 +285,10 @@
                                 on the accordion.
                             </li>
                             <li>
-                                Hold down <kbd>q</kbd> to <strong>push</strong>
+                                Hold down <kbd>q</kbd> to
+                                <span class="push-text">push</span>
                                 the bellows. Default is
-                                <strong>pull</strong>.
+                                <span class="pull-text">pull</span>.
                             </li>
                             <li>
                                 The treble side buttons begin with <kbd>z</kbd>,
@@ -302,7 +305,7 @@
                         </ul>
                     </div>
 
-                    <div class="flex">
+                    <div class="info-row">
                         <div>
                             <h3>Tuning</h3>
                             <select on:change={handleChangeTuning}>
@@ -317,60 +320,38 @@
                                 {/each}
                             </select>
                         </div>
+                        <div class="currently-playing">
+                            {#each Object.entries(activeButtonIdMap) as [id, value]}
+                                <div class="flex col">
+                                    <div class="circle note">
+                                        {value.name}
+                                    </div>
+                                    <div>
+                                        <small
+                                            >Row: {id.split("-")[0]}<br />
+                                            Col: {id.split("-")[1]}</small
+                                        >
+                                    </div>
+                                </div>
+                            {/each}
+                        </div>
                     </div>
-
                     <div>
                         <h3>Major Scales</h3>
                         <div class="scales">
-                            <div class="scale">
-                                <h4>F Major</h4>
-                                <div>
-                                    <button on:click={playScale("F", "notes")}
-                                        >Notes</button
-                                    >
-                                    <button on:click={playScale("F", "thirds")}
-                                        >Thirds</button
-                                    >
-                                </div>
-                            </div>
-                            <div class="scale">
-                                <h4>B♭ Major</h4>
-                                <div>
-                                    <button on:click={playScale("Bb", "notes")}
-                                        >Notes</button
-                                    >
-                                    <button on:click={playScale("Bb", "thirds")}
-                                        >Thirds</button
+                            {#each notes as note, i}
+                                {#if i % 4 == 0}<br />{/if}
+                                <div class="scale">
+                                    <button
+                                        on:click={playScale(
+                                            tuning,
+                                            note,
+                                            "notes",
+                                        )}>{note} Major</button
                                     >
                                 </div>
-                            </div>
-                            <div class="scale">
-                                <h4>E♭ Major</h4>
-                                <div>
-                                    <button on:click={playScale("Eb", "notes")}
-                                        >Notes</button
-                                    >
-                                    <button on:click={playScale("Eb", "thirds")}
-                                        >Thirds</button
-                                    >
-                                </div>
-                            </div>
+                            {/each}
                         </div>
-                    </div>
-
-                    <div class="currently-playing">
-                        {#each Object.entries(activeButtonIdMap) as [id, value]}
-                            <div class="flex col">
-                                <div class="circle note">{value.name}</div>
-                                <div>
-                                    <small
-                                        >Row: {id.split("-")[0]}<br /> Col: {id.split(
-                                            "-",
-                                        )[1]}</small
-                                    >
-                                </div>
-                            </div>
-                        {/each}
                     </div>
                 </div>
             </div>
