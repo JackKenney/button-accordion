@@ -22,7 +22,7 @@
 
     // State
     let direction = "pull";
-    let tuning = "B/C";
+    let tuning = Object.keys(layouts)[0];
     let activeButtonIdMap = {};
 
     let layout = getLayout(tuning);
