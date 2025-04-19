@@ -1,5 +1,17 @@
 import { tone } from './data.js'
 
+export const swingOptions = {
+    "Dry 0": 0,
+    "Giusto ± 5": 5,
+    "American ± 10": 10,
+    "Celeste ± 12": 12,
+    "German ± 14": 14,
+    "Italian ± 16": 16,
+    "French ± 20": 20,
+    "Scottish ± 23.5": 23.5,
+    "Irish ± 26": 26,
+}
+
 export const layouts = {
     'V3': [
         [], // blank for 2 row
@@ -82,6 +94,33 @@ export const layouts = {
             ['B.5', 'E.6'],
         ],
     ],
+    'C#/D': [
+        [], // blank for 2 row
+        [
+            ['Bb.2', 'F.3'],
+            ['C.3', 'Ab.2'],
+            ['Eb.3', 'Db.3'],
+            ['Gb.3', 'F.3'],
+            ['Bb.4', 'Ab.3'],
+            ['C.4', 'Db.4'],
+            ['Eb.4', 'F.4'],
+            ['Gb.4', 'Ab.4'],
+            ['Bb.4', 'Db.5'],
+            ['C.5', 'F.5'],
+            ['Eb.5', 'Ab.5'],
+        ], [
+            ['C.3', 'Gb.3'],
+            ['Db.3', 'A.3'],
+            ['E.4', 'D.4'],
+            ['G.4', 'Gb.4'],
+            ['B.4', 'A.4'],
+            ['Db.4', 'D.5'],
+            ['E.5', 'Gb.5'],
+            ['G.5', 'A.5'],
+            ['B.5', 'D.6'],
+            ['Db.5', 'Gb.6'],
+        ],
+    ],
 }
 
 export const bassLayouts = {
@@ -96,6 +135,18 @@ export const bassLayouts = {
         [['A.2'], ['E.2']],
         [['F.3', 'A.3', 'C.4'], ['C.3', 'E.3', 'G.3']],
         [['F.2'], ['C.2']],
+    ]],
+    'C#/D': [[
+        [['E.3', 'Ab.3', 'B.4'], ['A.3', 'Db.3', 'E.4']],
+        [['E.2'], ['A.2']],
+        [['A.3', 'Db.3', 'E.4'], ['D.3', 'Gb.3', 'A.3']],
+        [['A.2'], ['D.2']],
+    ],
+    [
+        [['B.3', 'Eb.4', 'Gb.4'], ['Gb.3', 'Bb.3', 'Db.4']],
+        [['B.2'], ['Gb.2']],
+        [['G.3', 'C.3', 'E.4'], ['E.3', 'Ab.3', 'B.4']],
+        [['G.2'], ['E.2']],
     ]],
     'V2': [[], []],
     'V3': [[
@@ -143,11 +194,11 @@ export const getBassRows = (arrangement) => arrangement.map((row, r) => (
         const [pulls, pushes] = button;
 
         const pulls_split = pulls.map((pull) => pull.split('.'))
-        const pull_note = pulls_split.map(([name,]) => name).join('')
+        const pull_note = pulls_split.map(([name,]) => name).join(',')
         const pull_tones = pulls_split.map(([name, octave]) => tone[name][parseInt(octave)])
 
         const pushes_split = pushes.map((pull) => pull.split('.'))
-        const push_note = pushes_split.map(([name,]) => name).join('')
+        const push_note = pushes_split.map(([name,]) => name).join(',')
         const push_tones = pushes_split.map(([name, octave]) => tone[name][parseInt(octave)])
 
         const pull = { id: `${r + 1}-${b + 1}-pull-bass`, name: pull_note, frequency: pull_tones }
@@ -159,17 +210,18 @@ export const getBassRows = (arrangement) => arrangement.map((row, r) => (
 
 // Scales
 export const notes = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
-const findScale = (tuning, note) => {
+const findScale = (tuning, note, intervals) => {
     const scale = [];
-    const intervals = [0, 2, 2, 1, 2, 2, 2, 1]
     const original_idx = notes.indexOf(note)
-    let last = original_idx
+    let curr = original_idx
     let octave = 4
+    const nextOctave = octave + 1
     intervals.forEach((interval) => {
-        if ((last + interval) % notes.length < original_idx && last + interval >= notes.length)
-            octave += 1
-        last = last + interval
-        const find = notes[last % notes.length] // find next note name
+        curr = curr + interval
+        if (notes.length <= curr) {
+            octave = nextOctave
+        }
+        const find = notes[curr % notes.length] // find next note name
         let found = false;
         layouts[tuning].forEach((row, r) => {
             row.forEach(([pull, push], b) => {
@@ -189,7 +241,10 @@ const findScale = (tuning, note) => {
 
 export const getScales = (tuning) => (
     notes.reduce((carry, note) => {
-        carry[note] = { notes: findScale(tuning, note) }
+        carry[note] = {
+            major: findScale(tuning, note, [0, 2, 2, 1, 2, 2, 2, 1]),
+            minor: findScale(tuning, note, [0, 2, 1, 2, 2, 2, 1, 2])
+        }
         return carry
     }, {})
 )
@@ -292,6 +347,7 @@ export const bassKeyMap = {
 export const rowMap = { 2: 'two', 3: 'three' }
 export const bassRowMap = { 1: 'one', 2: 'two' }
 export const rowTones = {
+    'C#/D': { one: '', two: 'C#', three: 'D' },
     'B/C': { one: '', two: 'B', three: 'C' },
     'V3': { one: '', two: 'outer', three: 'inner' },
     'V2': { one: '', two: 'outer', three: 'inner' },

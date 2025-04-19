@@ -13,7 +13,9 @@
         rowTones,
         toggleBellows,
         getScales,
+        swingOptions,
     } from "../diatonic-data.js";
+    import { analysis } from "../diatonic-analysis.js";
 
     // Audio
     const audio = new (window.AudioContext || window.webkitAudioContext)();
@@ -22,8 +24,9 @@
     gainNode.connect(audio.destination);
 
     // State
+    let swing = 23.5; // scottish swing sounds okay in this oscillator https://thesession.org/discussions/16681
     let direction = "pull";
-    let tuning = Object.keys(layouts)[0];
+    let tuning = Object.keys(rowTones)[0];
     let activeButtonIdMap = {};
 
     let layout = getLayout(tuning);
@@ -37,6 +40,10 @@
         buttonIdMap = getButtonIdMap(layout, bassLayout);
 
         tuning = newTuning; // trigger rerender from #key
+    }
+
+    function handleChangeSwing(e) {
+        swing = e.target.value;
     }
 
     // Handlers
@@ -60,6 +67,15 @@
             oscillator.connect(gainNode);
             oscillator.frequency.value = frequency;
             oscillator.start();
+
+            const swingOscillator = audio.createOscillator();
+            swingOscillator.type = "sawtooth";
+            swingOscillator.connect(gainNode);
+            swingOscillator.frequency.value =
+                frequency * (0.010594630943592953 * swing);
+            swingOscillator.start();
+
+            oscillator = [oscillator, swingOscillator];
         }
 
         return { oscillator };
@@ -214,7 +230,7 @@
             }
         }
 
-        await sleep(600);
+        await sleep(300);
 
         for (const id of idSet) {
             stopTone(id);
@@ -309,13 +325,25 @@
                         <div>
                             <h3>Tuning</h3>
                             <select on:change={handleChangeTuning}>
-                                {#each Object.keys(layouts) as key}
+                                {#each Object.keys(rowTones) as key}
                                     {#if tuning == key}
                                         <option value={key} selected
                                             >{key}</option
                                         >
                                     {:else}
                                         <option value={key}>{key}</option>
+                                    {/if}
+                                {/each}
+                            </select>
+                        </div>
+                        <div>
+                            <h3>Swing</h3>
+                            <select on:change={handleChangeSwing}>
+                                {#each Object.entries(swingOptions) as [name, value]}
+                                    {#if swing == value}
+                                        <option {value} selected>{name}</option>
+                                    {:else}
+                                        <option {value}>{name}</option>
                                     {/if}
                                 {/each}
                             </select>
@@ -337,22 +365,34 @@
                         </div>
                     </div>
                     <div>
-                        <h3>Major Scales</h3>
+                        <h3>Scales</h3>
                         <div class="scales">
                             {#each notes as note, i}
-                                {#if i % 4 == 0}<br />{/if}
+                                <!-- {#if i % 4 == 0}<br />{/if} -->
                                 <div class="scale">
                                     <button
                                         on:click={playScale(
                                             tuning,
                                             note,
-                                            "notes",
+                                            "major",
                                         )}>{note} Major</button
+                                    >
+                                    <button
+                                        on:click={playScale(
+                                            tuning,
+                                            note,
+                                            "minor",
+                                        )}>{note} Minor</button
                                     >
                                 </div>
                             {/each}
                         </div>
                     </div>
+                </div>
+                <div>
+                    <pre>
+                        <!-- {JSON.stringify(analysis, null, 2)} -->
+                    </pre>
                 </div>
             </div>
 
