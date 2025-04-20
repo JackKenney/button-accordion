@@ -340,76 +340,6 @@ export const getScales = (tuning) => (
     }, {})
 )
 
-
-export const scales_old = {
-    F: {
-        notes: [
-            ['3-3-pull'],
-            ['1-6-pull'],
-            ['2-6-pull'],
-            ['1-7-pull'],
-            ['2-7-pull'],
-            ['3-6-pull'],
-            ['1-9-pull'],
-            ['3-7-pull'],
-        ],
-        thirds: [
-            ['2-6-pull', '3-3-pull'],
-            ['1-6-pull', '1-7-pull'],
-            ['2-6-pull', '2-7-pull'],
-            ['1-7-pull', '1-8-pull'],
-            ['1-9-pull', '2-7-pull'],
-            ['3-7-pull', '3-6-pull'],
-            ['1-9-pull', '1-10-pull'],
-            ['2-10-pull', '3-7-pull'],
-        ],
-    },
-    Bb: {
-        notes: [
-            ['1-3-pull'],
-            ['2-3-pull'],
-            ['3-2-pull'],
-            ['2-4-pull'],
-            ['3-3-pull'],
-            ['1-6-pull'],
-            ['2-6-pull'],
-            ['1-7-pull'],
-        ],
-        thirds: [
-            ['1-3-pull', '1-4-pull'],
-            ['2-3-pull', '2-4-pull'],
-            ['3-2-pull', '3-3-pull'],
-            ['2-4-pull', '2-5-pull'],
-            ['3-3-pull', '2-6-pull'],
-            ['1-6-pull', '1-7-pull'],
-            ['2-6-pull', '2-7-pull'],
-            ['1-7-pull', '1-8-pull'],
-        ],
-    },
-    Eb: {
-        notes: [
-            ['2-4-pull'],
-            ['3-3-pull'],
-            ['2-5-pull'],
-            ['3-4-pull'],
-            ['1-7-pull'],
-            ['2-7-pull'],
-            ['3-6-pull'],
-            ['2-8-pull'],
-        ],
-        thirds: [
-            ['2-5-pull', '2-4-pull'],
-            ['3-3-pull', '3-4-pull'],
-            ['2-5-pull', '1-7-pull'],
-            ['3-4-pull', '3-5-pull'],
-            ['1-7-pull', '1-8-pull'],
-            ['2-7-pull', '2-8-pull'],
-            ['3-6-pull', '3-7-pull'],
-            ['2-8-pull', '2-9-pull'],
-        ],
-    },
-}
-
 export const getButtonIdMap = (layout, bassLayout) => {
     const { one, two, three } = layout;
     return [...one, ...two, ...three, ...bassLayout.one, ...bassLayout.two].reduce(
@@ -438,6 +368,7 @@ export const bassKeyMap = {
 export const rowMap = { 2: 'two', 3: 'three' }
 export const bassRowMap = { 1: 'one', 2: 'two' }
 export const rowTones = {
+    'V4': { one: '', two: 'outer', three: 'inner' },
     'V3': { one: '', two: 'outer', three: 'inner' },
     'V2': { one: '', two: 'outer', three: 'inner' },
     'V1': { one: '', two: 'outer', three: 'inner' },

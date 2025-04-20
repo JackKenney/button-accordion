@@ -53,7 +53,6 @@
 
     // Handlers
     function playTone(id) {
-        console.log("playing ", id);
         const { frequency } = buttonIdMap[id];
         let oscillator;
 
