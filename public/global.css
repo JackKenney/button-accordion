@@ -338,7 +338,10 @@ h2.direction {
   flex-direction: row;
   align-items: center;
   justify-content: left;
-  margin: 2%,
+}
+
+.info-row * {
+  padding: 10px;
 }
 
 .scales {

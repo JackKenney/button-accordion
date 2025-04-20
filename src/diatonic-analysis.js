@@ -45,6 +45,11 @@ for (let tuning in layouts) {
     analysis[tuning].average.bellows = average(analysis[tuning], 'bellows')
     analysis[tuning].average.button = average(analysis[tuning], 'button')
     analysis[tuning].average.bellowsbutton = average(analysis[tuning], 'bellowsbutton')
+
+    Object.keys(analysis[tuning]).forEach((key) => {
+        if (key != 'average')
+            delete analysis[tuning][key];
+    })
 }
 
-console.log(analysis)
+console.log(JSON.stringify(analysis, null, 2))

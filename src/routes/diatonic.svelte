@@ -24,7 +24,7 @@
     gainNode.connect(audio.destination);
 
     // State
-    let swing = 23.5; // scottish swing sounds okay in this oscillator https://thesession.org/discussions/16681
+    let swing = 23.5; // sounds best to me in this oscillator https://thesession.org/discussions/16681
     let direction = "pull";
     let tuning = Object.keys(rowTones)[0];
     let activeButtonIdMap = {};
@@ -48,6 +48,7 @@
 
     // Handlers
     function playTone(id) {
+        console.log("playing ", id);
         const { frequency } = buttonIdMap[id];
         let oscillator;
 
@@ -92,11 +93,11 @@
     }
 
     function handleToggleBellows(newDirection) {
+        console.log(activeButtonIdMap);
         if (direction !== newDirection) {
             direction = newDirection;
 
             const newActiveButtonIdMap = {};
-            let isBass = false;
 
             // When switching the bellows
             for (const [keyId, keyValues] of Object.entries(
@@ -105,7 +106,6 @@
                 // Remove existing value
 
                 if (Array.isArray(keyValues.oscillator)) {
-                    isBass = true;
                     keyValues.oscillator.forEach((hz) => hz?.stop());
                 } else {
                     keyValues.oscillator?.stop();
@@ -114,7 +114,8 @@
                 // Must be reassigned in Svelte
                 delete newActiveButtonIdMap[keyId];
 
-                // Add the reverse value
+                const isBass = keyId.includes("bass");
+                // Add the reverse valueA
                 const reverseKeyId = `${keyId.split("-")[0]}-${keyId.split("-")[1]}-${newDirection}${
                     isBass ? "-bass" : ""
                 }`;
@@ -355,10 +356,11 @@
                                         {value.name}
                                     </div>
                                     <div>
-                                        <small
-                                            >Row: {id.split("-")[0]}<br />
-                                            Col: {id.split("-")[1]}</small
-                                        >
+                                        <small>
+                                            Row: {id.split("-")[0]}
+                                            <br />
+                                            Col: {id.split("-")[1]}
+                                        </small>
                                     </div>
                                 </div>
                             {/each}
@@ -368,31 +370,42 @@
                         <h3>Scales</h3>
                         <div class="scales">
                             {#each notes as note, i}
-                                <!-- {#if i % 4 == 0}<br />{/if} -->
                                 <div class="scale">
                                     <button
                                         on:click={playScale(
                                             tuning,
                                             note,
                                             "major",
-                                        )}>{note} Major</button
+                                        )}>{note}</button
+                                    >
+                                    <button
+                                        on:click={playScale(
+                                            tuning,
+                                            note,
+                                            "majorThirds",
+                                        )}>{note} 3rds</button
                                     >
                                     <button
                                         on:click={playScale(
                                             tuning,
                                             note,
                                             "minor",
-                                        )}>{note} Minor</button
+                                        )}>{note}m</button
+                                    >
+                                    <button
+                                        on:click={playScale(
+                                            tuning,
+                                            note,
+                                            "minorThirds",
+                                        )}>{note}m 3rds</button
                                     >
                                 </div>
                             {/each}
                         </div>
                     </div>
-                </div>
-                <div>
-                    <pre>
-                        <!-- {JSON.stringify(analysis, null, 2)} -->
-                    </pre>
+                    <div>
+                        <!-- <pre>{JSON.stringify(analysis, null, 2)}</pre> -->
+                    </div>
                 </div>
             </div>
 
