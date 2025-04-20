@@ -98,7 +98,6 @@
     }
 
     function handleToggleBellows(newDirection) {
-        console.log(activeButtonIdMap);
         if (direction !== newDirection) {
             direction = newDirection;
 
@@ -327,8 +326,8 @@
                         </ul>
                     </div>
 
-                    <div class="info-row">
-                        <div>
+                    <div>
+                        <div class="info-row">
                             <h3>Tuning</h3>
                             <select on:change={handleChangeTuning}>
                                 {#each Object.keys(rowTones) as key}
@@ -342,7 +341,7 @@
                                 {/each}
                             </select>
                         </div>
-                        <div>
+                        <div class="info-row">
                             <h3>Swing</h3>
                             <select on:change={handleChangeSwing}>
                                 {#each Object.entries(swingOptions) as [name, value]}
