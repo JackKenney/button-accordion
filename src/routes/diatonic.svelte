@@ -29,6 +29,7 @@
     let tuning = Object.keys(rowTones)[0];
     let activeButtonIdMap = {};
 
+    let scalesKey = "C";
     let layout = getLayout(tuning);
     let bassLayout = getBassLayout(tuning);
     let buttonIdMap = getButtonIdMap(layout, bassLayout);
@@ -44,6 +45,10 @@
 
     function handleChangeSwing(e) {
         swing = e.target.value;
+    }
+
+    function handleChangeSelectedKey(e) {
+        scalesKey = e.target.value;
     }
 
     // Handlers
@@ -349,6 +354,44 @@
                                 {/each}
                             </select>
                         </div>
+                    </div>
+                    <div>
+                        <h3>Scales</h3>
+                        <div class="scales scale">
+                            <select on:change={handleChangeSelectedKey}>
+                                {#each notes as note}
+                                    {#if scalesKey == note}
+                                        <option {note} selected>{note}</option>
+                                    {:else}
+                                        <option {note}>{note}</option>
+                                    {/if}
+                                {/each}
+                            </select>
+                            <button
+                                on:click={playScale(tuning, scalesKey, "major")}
+                                >{scalesKey}</button
+                            >
+                            <button
+                                on:click={playScale(
+                                    tuning,
+                                    scalesKey,
+                                    "majorThirds",
+                                )}>{scalesKey} 3rds</button
+                            >
+                            <button
+                                on:click={playScale(tuning, scalesKey, "minor")}
+                                >{scalesKey}m</button
+                            >
+                            <button
+                                on:click={playScale(
+                                    tuning,
+                                    scalesKey,
+                                    "minorThirds",
+                                )}>{scalesKey}m 3rds</button
+                            >
+                        </div>
+                    </div>
+                    <div>
                         <div class="currently-playing">
                             {#each Object.entries(activeButtonIdMap) as [id, value]}
                                 <div class="flex col">
@@ -365,45 +408,6 @@
                                 </div>
                             {/each}
                         </div>
-                    </div>
-                    <div>
-                        <h3>Scales</h3>
-                        <div class="scales">
-                            {#each notes as note, i}
-                                <div class="scale">
-                                    <button
-                                        on:click={playScale(
-                                            tuning,
-                                            note,
-                                            "major",
-                                        )}>{note}</button
-                                    >
-                                    <button
-                                        on:click={playScale(
-                                            tuning,
-                                            note,
-                                            "majorThirds",
-                                        )}>{note} 3rds</button
-                                    >
-                                    <button
-                                        on:click={playScale(
-                                            tuning,
-                                            note,
-                                            "minor",
-                                        )}>{note}m</button
-                                    >
-                                    <button
-                                        on:click={playScale(
-                                            tuning,
-                                            note,
-                                            "minorThirds",
-                                        )}>{note}m 3rds</button
-                                    >
-                                </div>
-                            {/each}
-                        </div>
-                    </div>
-                    <div>
                         <!-- <pre>{JSON.stringify(analysis, null, 2)}</pre> -->
                     </div>
                 </div>

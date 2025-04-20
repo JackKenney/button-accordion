@@ -438,10 +438,10 @@ export const bassKeyMap = {
 export const rowMap = { 2: 'two', 3: 'three' }
 export const bassRowMap = { 1: 'one', 2: 'two' }
 export const rowTones = {
-    'V0': { one: '', two: 'outer', three: 'inner' },
-    'V1': { one: '', two: 'outer', three: 'inner' },
-    'V2': { one: '', two: 'outer', three: 'inner' },
     'V3': { one: '', two: 'outer', three: 'inner' },
+    'V2': { one: '', two: 'outer', three: 'inner' },
+    'V1': { one: '', two: 'outer', three: 'inner' },
+    'V0': { one: '', two: 'outer', three: 'inner' },
     'C#/D': { one: '', two: 'C#', three: 'D' },
     'B/C': { one: '', two: 'B', three: 'C' },
 }
