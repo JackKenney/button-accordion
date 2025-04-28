@@ -2,7 +2,8 @@ import { mean } from 'mathjs'
 import {
     layouts,
     getScales,
-    getLayout
+    getLayout,
+    rowTones
 } from './diatonic-data.js'
 
 const transitionWork = (id1, id2) => {
@@ -18,12 +19,30 @@ const transitionWork = (id1, id2) => {
 }
 
 const average = (scaleAnalysis, type) => {
-    const counts = Object.values(scaleAnalysis).map((value) => value[type]);
+    const weighting = {
+        'G': 32,
+        'D': 32,
+        'A': 16,
+        'C': 16,
+        'F': 8,
+        'E': 8,
+        'Bb': 4,
+        'B': 4,
+        'Eb': 2,
+        'Gb': 2,
+        'Ab': 1,
+        'Db': 1,
+    };
+
+    const counts = Object.entries(scaleAnalysis)
+        .map(([key, value]) => (weighting[key] || 0) * (value[type] || 0));
+
+    // const counts = Object.values(scaleAnalysis).map((value) => value[type]);
     return mean(counts)
 }
 
 export const analysis = {};
-for (let tuning in layouts) {
+for (let tuning in rowTones) {
     analysis[tuning] = {
         average: {}
     }
@@ -38,13 +57,18 @@ for (let tuning in layouts) {
             carry.button += button
             carry.bellowsbutton += bellows && button
 
+            if (notes[i][0].includes('pull')) carry.pull += 1
+            else carry.push += 1
+
             return carry;
-        }, { bellows: 0, button: 0, bellowsbutton: 0 })
+        }, { bellows: 0, button: 0, bellowsbutton: 0, push: 0, pull: 0 })
     }
 
     analysis[tuning].average.bellows = average(analysis[tuning], 'bellows')
     analysis[tuning].average.button = average(analysis[tuning], 'button')
     analysis[tuning].average.bellowsbutton = average(analysis[tuning], 'bellowsbutton')
+    analysis[tuning].average.pull = average(analysis[tuning], 'pull')
+    analysis[tuning].average.push = average(analysis[tuning], 'push')
 
     Object.keys(analysis[tuning]).forEach((key) => {
         if (key != 'average')
