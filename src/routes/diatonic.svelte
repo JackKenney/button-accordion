@@ -53,7 +53,7 @@
 
     // Handlers
     function playTone(id) {
-        const { frequency } = buttonIdMap[id];
+        const { frequency, nextFrequency } = buttonIdMap[id];
         let oscillator;
 
         if (Array.isArray(frequency)) {
@@ -73,14 +73,16 @@
             oscillator.frequency.value = frequency;
             oscillator.start();
 
-            const swingOscillator = audio.createOscillator();
-            swingOscillator.type = "sawtooth";
-            swingOscillator.connect(gainNode);
-            swingOscillator.frequency.value =
-                frequency * (0.010594630943592953 * swing);
-            swingOscillator.start();
+            if (swing) {
+                const swingOscillator = audio.createOscillator();
+                swingOscillator.type = "sawtooth";
+                swingOscillator.connect(gainNode);
+                swingOscillator.frequency.value =
+                    frequency + (swing / 100) * (nextFrequency - frequency);
+                swingOscillator.start();
 
-            oscillator = [oscillator, swingOscillator];
+                oscillator = [oscillator, swingOscillator];
+            }
         }
 
         return { oscillator };
