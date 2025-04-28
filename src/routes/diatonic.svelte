@@ -330,7 +330,10 @@
                     <div>
                         <div class="info-row">
                             <h3>Tuning</h3>
-                            <select on:change={handleChangeTuning}>
+                            <select
+                                on:change={handleChangeTuning}
+                                name="tuning"
+                            >
                                 {#each Object.keys(rowTones) as key}
                                     {#if tuning == key}
                                         <option value={key} selected
@@ -344,7 +347,7 @@
                         </div>
                         <div class="info-row">
                             <h3>Swing</h3>
-                            <select on:change={handleChangeSwing}>
+                            <select on:change={handleChangeSwing} name="swing">
                                 {#each Object.entries(swingOptions) as [name, value]}
                                     {#if swing == value}
                                         <option {value} selected>{name}</option>
@@ -358,7 +361,10 @@
                     <div>
                         <h3>Scales</h3>
                         <div class="scales scale">
-                            <select on:change={handleChangeSelectedKey}>
+                            <select
+                                on:change={handleChangeSelectedKey}
+                                name="selected key"
+                            >
                                 {#each notes as note}
                                     {#if scalesKey == note}
                                         <option {note} selected>{note}</option>
