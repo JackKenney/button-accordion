@@ -423,18 +423,21 @@ export const bassLayouts = {
     ]],
     'V1': [[], []],
     'V2': [[], []],
-    'V3': [[
+    'V3': [[ // just 6 buttons that match the rows and notes on push/pull
         [['G.2'], ['D.2']],
         [['E.2'], ['A.2']],
         [['B.2'], ['Gb.2']],
+        [['G.2'], ['D.2']], // duplicate farthest column for ease of 3 fingered playing
     ],
     [
         [['C.2'], ['F.2']],
         [['Eb.2'], ['Bb.2']],
         [['Ab.2'], ['Db.2']]
+        [['C.2'], ['F.2']], // duplicate farthest column for ease of 3 fingered playing
     ]]
 }
 
+export const notes = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
 
 export const getLayout = (tuning) => {
     const arrangement = layouts[tuning]
@@ -500,7 +503,6 @@ export const getBassRows = (arrangement) => arrangement ? arrangement.map((row, 
 )) : [[], []]
 
 // Scales
-export const notes = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
 const findScale = (tuning, note, intervals) => {
     const scale = [];
     const original_idx = notes.indexOf(note)
