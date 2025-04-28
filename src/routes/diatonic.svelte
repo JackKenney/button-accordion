@@ -24,7 +24,7 @@
     gainNode.connect(audio.destination);
 
     // State
-    let swing = 23.5; // sounds best to me in this oscillator https://thesession.org/discussions/16681
+    let swing = 26; // https://thesession.org/discussions/16681
     let direction = "pull";
     let tuning = Object.keys(rowTones)[0];
     let activeButtonIdMap = {};
