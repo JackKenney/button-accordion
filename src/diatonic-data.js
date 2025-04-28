@@ -423,7 +423,7 @@ export const bassLayouts = {
     ]],
     'V1': [[], []],
     'V2': [[], []],
-    'V3': [[ // just 6 buttons that match the rows and notes on push/pull
+    'V3': [[
         [['G.2'], ['D.2']],
         [['E.2'], ['A.2']],
         [['B.2'], ['Gb.2']],
