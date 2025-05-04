@@ -24,7 +24,7 @@
     gainNode.connect(audio.destination);
 
     // State
-    let swing = 26; // https://thesession.org/discussions/16681
+    let swing = 7;
     let direction = "pull";
     let tuning = Object.keys(rowTones)[0];
     let activeButtonIdMap = {};
@@ -394,6 +394,10 @@
                                     scalesKey,
                                     "minorThirds",
                                 )}>{scalesKey}m 3rds</button
+                            >
+                            <button
+                                on:click={playScale(tuning, scalesKey, "all")}
+                                >All</button
                             >
                         </div>
                     </div>
