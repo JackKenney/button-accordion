@@ -73,6 +73,12 @@
             oscillator.frequency.value = frequency;
             oscillator.start();
 
+            const octaveOscillator = audio.createOscillator();
+            octaveOscillator.type = "sawtooth";
+            octaveOscillator.connect(gainNode);
+            octaveOscillator.frequency.value = frequency / 2;
+            octaveOscillator.start();
+
             if (swing) {
                 const swingOscillator = audio.createOscillator();
                 swingOscillator.type = "sawtooth";
@@ -81,7 +87,7 @@
                     frequency + (swing / 100) * (nextFrequency - frequency);
                 swingOscillator.start();
 
-                oscillator = [oscillator, swingOscillator];
+                oscillator = [octaveOscillator, oscillator, swingOscillator];
             }
         }
 
